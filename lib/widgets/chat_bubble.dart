@@ -1,30 +1,34 @@
-import 'package:chat_app/constants.dart';
 import 'package:chat_app/models/message.dart';
 import 'package:flutter/material.dart';
+import '../constants.dart';
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({
     Key? key,
     required this.message,
   }) : super(key: key);
+
   final Message message;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadiusDirectional.only(
-                  topStart: Radius.circular(20),
-                  topEnd: Radius.circular(20),
-                  bottomStart: Radius.circular(20)),
-              color: KPrimaryColor),
-          child: Text(
-            message.message,
-            style: const TextStyle(color: Colors.white),
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.only(left: 16, top: 32, bottom: 32, right: 32),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+            bottomRight: Radius.circular(32),
+          ),
+          color: kPrimaryColor,
+        ),
+        child: Text(
+          message.message,
+          style: const TextStyle(
+            color: Colors.white,
           ),
         ),
       ),
@@ -32,31 +36,33 @@ class ChatBubble extends StatelessWidget {
   }
 }
 
-
-
 class ChatBubbleForFriend extends StatelessWidget {
   const ChatBubbleForFriend({
     Key? key,
     required this.message,
   }) : super(key: key);
+
   final Message message;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadiusDirectional.only(
-                  topStart: Radius.circular(20),
-                  topEnd: Radius.circular(20),
-                  bottomEnd: Radius.circular(20)),
-              color: Colors.blue),
-          child: Text(
-            message.message,
-            style: const TextStyle(color: Colors.white),
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Container(
+        padding: const EdgeInsets.only(left: 16, top: 32, bottom: 32, right: 32),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+            bottomLeft: Radius.circular(32),
+          ),
+          color: Color(0xff006D84),
+        ),
+        child: Text(
+          message.message,
+          style: const TextStyle(
+            color: Colors.white,
           ),
         ),
       ),

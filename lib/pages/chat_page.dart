@@ -1,109 +1,92 @@
 import 'package:chat_app/constants.dart';
 import 'package:chat_app/models/message.dart';
+import 'package:chat_app/cubit/chat_cubit/chat_cubit.dart';
 import 'package:chat_app/widgets/chat_bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
+//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatPage extends StatelessWidget {
-  // ChatPage({super.key});
   static String id = 'ChatPage';
 
   final _controller = ScrollController();
+  List<Message> messagesList = [];
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-   CollectionReference messages = FirebaseFirestore.instance.collection('messages');
-    TextEditingController messageController = TextEditingController();
+  TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-   var email =  ModalRoute.of(context)!.settings.arguments;
-    return StreamBuilder<QuerySnapshot>(
-      stream: messages.orderBy(
-        'createdAt',
-        descending: true,
-      ).snapshots(),
-      builder: (context, snapshot) {
-       
-       if(snapshot.hasData)
-       {
-        List<Message> messagesList = [];
-        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-        messagesList.add(Message.fromJson(snapshot.data!.docs[i].data() as Map<String, dynamic>));
-        }
-        // print(snapshot.data!.docs[0]['text']);
-         return Scaffold(
+    var email = ModalRoute.of(context)!.settings.arguments;
+
+    return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: KPrimaryColor,
+        backgroundColor: kPrimaryColor,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/scholar.png', height: 40),
-            Text('Chat', style: const TextStyle(color: Colors.white)),
+            Image.asset(
+              kLogo,
+              height: 50,
+            ),
+            Text('chat'),
           ],
         ),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          Expanded(   
-            child: ListView.builder(
-              controller: _controller,
-              itemCount: messagesList.length,
-              reverse: true,
-              itemBuilder: (context, index) {
-                return messagesList[index].id==email ? ChatBubble(
-                 // Key(messagesList[index].message!),
-                  message: messagesList[index],
-                ): ChatBubbleForFriend(
-                  //Key(messagesList[index].message!),
-                  message: messagesList[index],
-                );
+          Expanded(
+            child: BlocConsumer<ChatCubit, ChatState>(
+              listener: (context, state) {
+                if (state is ChatSuccess) {
+                  messagesList = state.messages;
+                }
+              },
+              builder: (context, state) {
+                return ListView.builder(
+                    reverse: true,
+                    controller: _controller,
+                    itemCount: messagesList.length,
+                    itemBuilder: (context, index) {
+                      return messagesList[index].id == email
+                          ? ChatBubble(
+                              message: messagesList[index],
+                            )
+                          : ChatBubbleForFriend(message: messagesList[index]);
+                    });
               },
             ),
           ),
-        TextField(
-          controller: messageController,
-          onSubmitted: (data) {
-            messages.add({
-              'text': data,
-              'createdAt': DateTime.now(),
-              'id': email,
-            });
-            messageController.clear();
-            _controller.animateTo(
-              0,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.fastOutSlowIn,
-            );
-          },
-          decoration: InputDecoration(
-            hintText: 'Type a message',
-            border: const OutlineInputBorder(
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-
-
-              borderRadius: BorderRadius.circular(15),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            filled: true,
-            fillColor: Colors.white10,
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.send, color: KPrimaryColor),
-              onPressed: () {},
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: controller,
+              onSubmitted: (data) {
+                controller.clear();
+                _controller.animateTo(0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeIn);
+              },
+              decoration: InputDecoration(
+                hintText: 'Send Message',
+                suffixIcon: const Icon(
+                  Icons.send,
+                  color: kPrimaryColor,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(
+                    color: kPrimaryColor,
+                  ),
+                ),
+              ),
             ),
           ),
-        )
         ],
       ),
- 
-    );
-       }else{
-        return Text('Loading...');
-       }
-      } ,
     );
   }
 }

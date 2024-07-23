@@ -1,11 +1,10 @@
 import 'package:chat_app/constants.dart';
 import 'package:chat_app/helpers/show_snack_bar.dart';
-import 'package:chat_app/cubit/chat_cubit/chat_cubit.dart';
-import 'package:chat_app/cubit/login_cubit/login_cubit.dart';
+import 'package:chat_app/pages/cubit/auth_cubit/auth_cubit.dart';
+import 'package:chat_app/pages/cubit/chat_cubit/chat_cubit.dart';
 import 'package:chat_app/pages/register_page.dart';
 import 'package:chat_app/widgets/custom_button.dart';
 import 'package:chat_app/widgets/custom_text_field.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -21,7 +20,7 @@ class LoginPage extends StatelessWidget {
   String? email, password;
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginCubit, LoginState>(
+    return BlocConsumer<AuthCubit, AuthState>(
 
       listener: (context, state) {
         if(state is LoginLoading){
@@ -102,7 +101,7 @@ class LoginPage extends StatelessWidget {
                   CustomButon(
                     onTap: () async {
                       if (formKey.currentState!.validate()) {
-                       BlocProvider.of<LoginCubit>(context).loginUser(email :email!,password: password!);
+                       BlocProvider.of<AuthCubit>(context).loginUser(email :email!,password: password!);
 
                         
                       } else {}
